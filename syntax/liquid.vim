@@ -70,16 +70,18 @@ endif
 
 syn region  liquidStatement  matchgroup=liquidDelimiter start="{%" end="%}" contains=@liquidStatement containedin=ALLBUT,@liquidExempt keepend
 syn region  liquidExpression matchgroup=liquidDelimiter start="{{" end="}}" contains=@liquidExpression  containedin=ALLBUT,@liquidExempt keepend
+syn region  liquidOption     matchgroup=liquidDelimiter start="^{::\?" end="/\?}$" contains=@liquidOption containedin=ALLBUT,@liquidExempt keepend
 syn region  liquidComment    matchgroup=liquidDelimiter start="{%\s*comment\s*%}" end="{%\s*endcomment\s*%}" contains=liquidTodo,@Spell containedin=ALLBUT,@liquidExempt keepend
 syn region  liquidRaw        matchgroup=liquidDelimiter start="{%\s*raw\s*%}" end="{%\s*endraw\s*%}" contains=TOP,@liquidExempt containedin=ALLBUT,@liquidExempt keepend
 
 syn cluster liquidExempt contains=liquidStatement,liquidExpression,liquidComment,liquidRaw,@liquidStatement,liquidYamlHead
 syn cluster liquidStatement contains=liquidConditional,liquidRepeat,liquidKeyword,@liquidExpression
 syn cluster liquidExpression contains=liquidOperator,liquidString,liquidNumber,liquidFloat,liquidBoolean,liquidNull,liquidEmpty,liquidPipe,liquidForloop
+syn cluster liquidOption contains=liquidKeyword,@liquidExpression
 
 syn keyword liquidKeyword highlight nextgroup=liquidTypeHighlight skipwhite contained
 syn keyword liquidKeyword endhighlight contained
-syn region liquidHighlight start="{%\s*highlight\s\+\w\+\s*%}" end="{% endhighlight %}" keepend
+syn region liquidHighlight start="{%\s*highlight\s\+\w\+\s*%}" end="{%\s*endhighlight\s*%}" keepend
 
 for s:type in g:liquid_highlight_types
   exe 'syn match liquidTypeHighlight "\<'.matchstr(s:type,'[^=]*').'\>" contained'
@@ -100,10 +102,10 @@ syn match liquidPipe '|' contained skipwhite nextgroup=liquidFilter
 
 syn keyword liquidFilter date capitalize downcase upcase first last join sort size strip_html strip_newlines newline_to_br replace replace_first remove remove_first truncate truncatewords prepend append minus plus times divided_by contained
 
-syn keyword liquidConditional if elsif else endif unless endunless case when endcase ifchanged endifchanged capture endcapture contained
+syn keyword liquidConditional if elsif else endif unless endunless case when endcase ifchanged endifchanged contained
 syn keyword liquidRepeat      for endfor tablerow endtablerow in contained
 syn match   liquidRepeat      "\%({%\s*\)\@<=empty\>" contained
-syn keyword liquidKeyword     assign cycle include raw endraw with contained
+syn keyword liquidKeyword     assign capture endcapture comment endcomment cycle include option options raw endraw with contained
 
 syn keyword liquidForloop forloop nextgroup=liquidForloopDot contained
 syn match liquidForloopDot "\." nextgroup=liquidForloopAttribute contained
